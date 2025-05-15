@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from rag import load_rag_pipeline
-import embedder  # ⚠️ Esto se puede eliminar luego de correr una vez
 
 app = FastAPI()
 
