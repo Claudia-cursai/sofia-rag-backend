@@ -5,11 +5,20 @@ from langchain.chains import RetrievalQA
 import os
 
 def load_rag_pipeline():
-    if not os.path.exists("vectorstore/index.faiss"):
-        raise FileNotFoundError("El vectorstore no fue generado aún. Ejecutá 'python embedder.py' desde la consola.")
+    print("🧠 Intentando cargar el vectorstore...")
 
-    vectorstore = FAISS.load_local("vectorstore", OpenAIEmbeddings())
+    # Verifica que el archivo FAISS exista
+    if not os.path.exists("vectorstore/index.faiss"):
+        print("❌ No se encontró el vectorstore. Ejecutá 'python embedder.py' desde la consola para crearlo.")
+        raise FileNotFoundError("Falta el vectorstore. Ejecutá 'python embedder.py' desde la consola.")
+
+    # Si existe, continúa con la carga normal
+    embeddings = OpenAIEmbeddings()
+    vectorstore = FAISS.load_local("vectorstore", embeddings)
     retriever = vectorstore.as_retriever()
     llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
     qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=retriever)
+
+    print("✅ Vectorstore cargado correctamente.")
     return qa_chain
+
